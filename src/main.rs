@@ -1,10 +1,14 @@
+// Complex types are extremely common in Bevy queries.
+#![allow(clippy::type_complexity)]
+
 mod component;
 mod constants;
 mod resource;
 mod system;
 
 use crate::{
-	component::{Direction, Hero, Position},
+	component::{Direction, SlashAttack, ThrustAttack, Velocity},
+	constants::*,
 	system::*,
 };
 
@@ -14,6 +18,9 @@ fn main() {
 	App::new()
 		.add_startup_system(setup)
 		.add_system(control_hero)
+		.add_system(slash)
+		.add_system(thrust)
+		.add_system(move_entities)
 		.add_system(animate_simple)
 		.add_system(animate_directional)
 		.insert_resource(WindowDescriptor {
@@ -27,25 +34,49 @@ fn main() {
 		.run();
 }
 
-pub fn control_hero(
-	input: Res<Input<KeyCode>>,
-	mut query: Query<(&mut Position, &mut Direction), With<Hero>>,
+fn slash(
+	mut commands: Commands,
+	mut query: Query<(Entity, &mut Velocity, &mut SlashAttack)>,
 ) {
-	let (mut position, mut direction) = query.single_mut();
-	if input.pressed(KeyCode::Left) {
-		position.x -= 1.0;
-		*direction = Direction::Left;
+	for (id, mut velocity, mut slash_attack) in query.iter_mut() {
+		*velocity = Velocity::zero();
+		if slash_attack.tick() == 0 {
+			commands.entity(id).remove::<SlashAttack>();
+		}
 	}
-	if input.pressed(KeyCode::Right) {
-		position.x += 1.0;
-		*direction = Direction::Right;
-	}
-	if input.pressed(KeyCode::Up) {
-		position.y += 1.0;
-		*direction = Direction::Up;
-	}
-	if input.pressed(KeyCode::Down) {
-		position.y -= 1.0;
-		*direction = Direction::Down;
+}
+
+fn thrust(
+	mut commands: Commands,
+	mut query: Query<(Entity, &mut Velocity, &Direction, &mut ThrustAttack)>,
+) {
+	for (id, mut velocity, direction, mut thrust_attack) in query.iter_mut() {
+		// Rush forward if the thrust is active or else stand still.
+		*velocity = if thrust_attack.is_active() {
+			match direction {
+				Direction::Up => Velocity {
+					x: 0.0,
+					y: THRUST_SPEED,
+				},
+				Direction::Down => Velocity {
+					x: 0.0,
+					y: -THRUST_SPEED,
+				},
+				Direction::Left => Velocity {
+					x: -THRUST_SPEED,
+					y: 0.0,
+				},
+				Direction::Right => Velocity {
+					x: THRUST_SPEED,
+					y: 0.0,
+				},
+			}
+		} else {
+			Velocity { x: 0.0, y: 0.0 }
+		};
+		// Reduce frames left and return control if finished thrusting.
+		if thrust_attack.tick() == 0 {
+			commands.entity(id).remove::<ThrustAttack>();
+		}
 	}
 }

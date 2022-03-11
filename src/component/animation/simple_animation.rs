@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::prelude::Component;
 
 /// A basic animation. See also `DirectedAnimation`.
 #[derive(Clone, PartialEq, Component)]

@@ -1,6 +1,6 @@
 use crate::constants::TILE_SIZE;
 
-use bevy::prelude::*;
+use bevy::prelude::Component;
 
 #[derive(Clone, Copy, PartialEq, Component)]
 pub struct Position {

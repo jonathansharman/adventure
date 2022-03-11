@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::prelude::Component;
 use rand::{
 	distributions::{Distribution, Standard},
 	Rng,

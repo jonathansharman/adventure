@@ -29,6 +29,14 @@ pub const MAX_ARROW_DELAY: u32 = 300;
 /// The speed of a launched arrow.
 pub const ARROW_SPEED: f32 = 10.0;
 
+/// The largest the x- or y-velocity while moving orthogonally.
+pub const ORTHOGONAL_SPEED: f32 = 1.0;
+/// Magnitude of the x- and y-velocity while moving diagonally.
+pub const DIAGONAL_SPEED: f32 =
+	std::f32::consts::FRAC_1_SQRT_2 * ORTHOGONAL_SPEED;
+/// Speed while thrusting.
+pub const THRUST_SPEED: f32 = 2.0 * ORTHOGONAL_SPEED;
+
 /// The speed at which a character is knocked away when hit.
 pub const KNOCKBACK_SPEED: f32 = 12.5;
 /// The number of frames knockback lasts.

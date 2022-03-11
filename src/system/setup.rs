@@ -1,8 +1,10 @@
 use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
-		Direction, Hero, Position,
+		collider::RectangleCollider,
+		Direction, Faction, Health, Hero, Position, Velocity,
 	},
+	constants::*,
 	resource::SpriteSheets,
 };
 
@@ -13,14 +15,22 @@ pub fn setup(
 	asset_server: Res<AssetServer>,
 	mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-	let sprite_sheets = SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
+	let sprite_sheets =
+		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
 
 	commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 	commands
 		.spawn_bundle((
 			Hero,
+			Faction::Ally,
+			Health::new(HERO_BASE_HEALTH),
 			Position { x: 0.0, y: 0.0 },
+			Velocity::zero(),
 			Direction::Down,
+			RectangleCollider {
+				half_width: 0.5 * TILE_SIZE,
+				half_height: 0.5 * TILE_SIZE,
+			},
 			DirectedAnimation::new(vec![DirectedFrame {
 				up: 0,
 				down: 1,

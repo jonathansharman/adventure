@@ -1,6 +1,6 @@
 use crate::component::Direction;
 
-use bevy::prelude::*;
+use bevy::prelude::Component;
 
 /// An animation that can use different sprites for each cardinal direction.
 #[derive(Clone, PartialEq, Component)]

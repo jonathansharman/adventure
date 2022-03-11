@@ -15,7 +15,10 @@ pub struct SpriteSheets {
 type Size = bevy::math::Size<usize>;
 
 impl SpriteSheets {
-	pub fn new(asset_server: &AssetServer, texture_atlases: &mut Assets<TextureAtlas>) -> Self {
+	pub fn new(
+		asset_server: &AssetServer,
+		texture_atlases: &mut Assets<TextureAtlas>,
+	) -> Self {
 		Self {
 			character: from_grid(
 				asset_server,

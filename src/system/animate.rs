@@ -15,13 +15,17 @@ pub fn animate_simple(
 	)>,
 ) {
 	// Update simple animations.
-	for (mut animation, mut transform, mut sprite, position) in query.iter_mut() {
+	for (mut animation, mut transform, mut sprite, position) in query.iter_mut()
+	{
 		// Update animation.
 		animation.advance();
 		// Set transform according to position.
-		*transform = Transform::from_scale(Vec3::new(2.0, 2.0, 1.0)).mul_transform(
-			Transform::from_translation(Vec3::new(position.x.round(), position.y.round(), 0.5)),
-		);
+		*transform = Transform::from_scale(Vec3::new(2.0, 2.0, 1.0))
+			.mul_transform(Transform::from_translation(Vec3::new(
+				position.x.round(),
+				position.y.round(),
+				0.5,
+			)));
 		// Set the current sprite.
 		sprite.index = animation.sprite_index();
 	}
@@ -38,14 +42,19 @@ pub fn animate_directional(
 	)>,
 ) {
 	// Update directional animations.
-	for (mut animation, mut transform, mut sprite, position, direction) in query.iter_mut() {
+	for (mut animation, mut transform, mut sprite, position, direction) in
+		query.iter_mut()
+	{
 		// Update animation.
 		animation.advance();
 		animation.set_direction(*direction);
 		// Set transform according to position.
-		*transform = Transform::from_scale(Vec3::new(2.0, 2.0, 1.0)).mul_transform(
-			Transform::from_translation(Vec3::new(position.x.round(), position.y.round(), 0.5)),
-		);
+		*transform = Transform::from_scale(Vec3::new(2.0, 2.0, 1.0))
+			.mul_transform(Transform::from_translation(Vec3::new(
+				position.x.round(),
+				position.y.round(),
+				0.5,
+			)));
 		// Set the current sprite.
 		sprite.index = animation.sprite_index();
 	}
