@@ -1,5 +1,5 @@
-/// The size of a tile in the world.
-pub const TILE_SIZE: f32 = 40.0;
+/// The side length of a tile in the world, in texels (not pixels).
+pub const TILE_SIZE: f32 = 20.0;
 
 /// The base maximum health of the hero.
 pub const HERO_BASE_HEALTH: i32 = 20;

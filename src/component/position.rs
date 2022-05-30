@@ -1,6 +1,7 @@
 use crate::constants::TILE_SIZE;
 
 use bevy::prelude::Component;
+use serde::Deserialize;
 
 #[derive(Clone, Copy, PartialEq, Component)]
 pub struct Position {
@@ -8,7 +9,7 @@ pub struct Position {
 	pub y: f32,
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Deserialize)]
 pub struct TileCoords {
 	pub row: usize,
 	pub col: usize,

@@ -2,10 +2,10 @@ use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
 		collider::RectangleCollider,
-		Direction, Faction, Health, Hero, Position, Velocity,
+		Direction, Faction, Health, Hero, Position, Terrain, Velocity,
 	},
 	constants::*,
-	resource::SpriteSheets,
+	resource::{Region, SpriteSheets},
 };
 
 use bevy::prelude::*;
@@ -19,6 +19,7 @@ pub fn setup(
 		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
 
 	commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+
 	commands
 		.spawn_bundle((
 			Hero,
@@ -43,6 +44,10 @@ pub fn setup(
 			texture_atlas: sprite_sheets.character.clone(),
 			..Default::default()
 		});
+
+	let region =
+		Region::load(&mut commands, &sprite_sheets, "assets/regions/test.ron");
+	commands.insert_resource(region);
 
 	commands.insert_resource(sprite_sheets);
 }

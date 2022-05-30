@@ -4,5 +4,7 @@ name = "adventure"
 version = "0.1.0"
 
 [dependencies]
-bevy = "0.6.1"
+bevy = "0.7.0"
 rand = "0.8.5"
+ron = "0.7.0"
+serde = "1.0.137"

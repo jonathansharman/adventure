@@ -1,3 +1,4 @@
+mod region;
 mod sprite_sheets;
 
-pub use sprite_sheets::SpriteSheets;
+pub use {region::Region, sprite_sheets::SpriteSheets};

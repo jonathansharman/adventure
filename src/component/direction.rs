@@ -3,8 +3,9 @@ use rand::{
 	distributions::{Distribution, Standard},
 	Rng,
 };
+use serde::Deserialize;
 
-#[derive(Clone, Copy, PartialEq, Eq, Component)]
+#[derive(Clone, Copy, PartialEq, Eq, Component, Deserialize)]
 #[repr(u8)]
 pub enum Direction {
 	Up,

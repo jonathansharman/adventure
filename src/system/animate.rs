@@ -14,7 +14,6 @@ pub fn animate_simple(
 		&Position,
 	)>,
 ) {
-	// Update simple animations.
 	for (mut animation, mut transform, mut sprite, position) in query.iter_mut()
 	{
 		// Update animation.

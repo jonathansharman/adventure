@@ -18,11 +18,13 @@ fn main() {
 	App::new()
 		.add_startup_system(setup)
 		.add_system(control_hero)
-		.add_system(slash)
-		.add_system(thrust)
-		.add_system(move_entities)
-		.add_system(animate_simple)
-		.add_system(animate_directional)
+		.add_system(slash.after(control_hero))
+		.add_system(thrust.after(control_hero))
+		.add_system(move_entities.after(slash).after(thrust))
+		.add_system(handle_static_collisions.after(move_entities))
+		.add_system(animate_simple.after(handle_static_collisions))
+		.add_system(animate_directional.after(handle_static_collisions))
+		.add_system(control_camera.after(animate_directional))
 		.insert_resource(WindowDescriptor {
 			title: "Adventure".to_string(),
 			width: 800.0,
