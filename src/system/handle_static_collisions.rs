@@ -1,6 +1,7 @@
 use crate::{
 	component::{
-		collider::RectangleCollider, Direction, Faction, Position, Terrain,
+		collider::RectangleCollider, Direction, Position, Terrain,
+		WithCharacter,
 	},
 	constants::*,
 	resource::Region,
@@ -14,7 +15,7 @@ pub fn handle_static_collisions(
 	current_region: Res<Region>,
 	mut character_query: Query<
 		(&RectangleCollider, &mut Position),
-		With<Faction>,
+		WithCharacter,
 	>,
 	terrain_query: Query<&Terrain>,
 ) {

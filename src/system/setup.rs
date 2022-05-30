@@ -2,7 +2,7 @@ use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
 		collider::RectangleCollider,
-		Direction, Faction, Health, Hero, Position, Terrain, Velocity,
+		Direction, Health, Hero, Position, Velocity,
 	},
 	constants::*,
 	resource::{Region, SpriteSheets},
@@ -23,7 +23,6 @@ pub fn setup(
 	commands
 		.spawn_bundle((
 			Hero,
-			Faction::Ally,
 			Health::new(HERO_BASE_HEALTH),
 			Position { x: 0.0, y: 0.0 },
 			Velocity::zero(),
