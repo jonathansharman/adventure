@@ -1,3 +1,6 @@
+/// Timestep in seconds per frame.
+pub const TIMESTEP: f64 = 1.0 / 60.0;
+
 /// The side length of a tile in the world, in texels (not pixels).
 pub const TILE_SIZE: f32 = 20.0;
 
@@ -29,12 +32,12 @@ pub const MAX_ARROW_DELAY: u32 = 300;
 /// The speed of a launched arrow.
 pub const ARROW_SPEED: f32 = 10.0;
 
-/// The largest the x- or y-velocity while moving orthogonally.
-pub const ORTHOGONAL_SPEED: f32 = 1.0;
-/// Magnitude of the x- and y-velocity while moving diagonally.
+/// Speed in texels per update while moving orthogonally.
+pub const ORTHOGONAL_SPEED: f32 = 2.0;
+/// Magnitude of x- and y-speed in texels per update while moving diagonally.
 pub const DIAGONAL_SPEED: f32 =
 	std::f32::consts::FRAC_1_SQRT_2 * ORTHOGONAL_SPEED;
-/// Speed while thrusting.
+/// Speed in texels per update while thrusting.
 pub const THRUST_SPEED: f32 = 2.0 * ORTHOGONAL_SPEED;
 
 /// The speed at which a character is knocked away when hit.
