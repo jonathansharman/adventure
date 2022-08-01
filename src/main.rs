@@ -12,8 +12,7 @@ use crate::{
 	system::*,
 };
 
-use bevy::{core::FixedTimestep, prelude::*};
-use bevy_pixel_camera::PixelCameraPlugin;
+use bevy::{prelude::*, time::FixedTimestep};
 
 fn main() {
 	App::new()
@@ -24,8 +23,8 @@ fn main() {
 			"fixed_update",
 			SystemStage::parallel()
 				.with_run_criteria(FixedTimestep::step(TIMESTEP))
-				.with_system(slash.after(control_hero))
-				.with_system(thrust.after(control_hero))
+				.with_system(slash)
+				.with_system(thrust)
 				.with_system(move_entities.after(slash).after(thrust))
 				.with_system(handle_static_collisions.after(move_entities))
 				.with_system(update_children.after(handle_static_collisions))
@@ -41,7 +40,8 @@ fn main() {
 		})
 		.insert_resource(ClearColor(Color::BLACK))
 		.add_plugins(DefaultPlugins)
-		.add_plugin(PixelCameraPlugin)
+		// TODO: Reenable if dependency incompatibility is resolved.
+		//.add_plugin(PixelCameraPlugin)
 		.run();
 }
 

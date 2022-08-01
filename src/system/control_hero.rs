@@ -1,7 +1,7 @@
 use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
-		transform_bundle, Direction, Hero, KnockedBack, Layer, SlashAttack,
+		spatial_bundle, Direction, Hero, KnockedBack, Layer, SlashAttack,
 		SlashSword, ThrustAttack, ThrustSword, Velocity,
 	},
 	constants::*,
@@ -107,7 +107,7 @@ pub fn control_hero(
 						texture_atlas: sprite_sheets.thrust_attack.clone(),
 						..Default::default()
 					})
-					.insert_bundle(transform_bundle(TILE_SIZE, 0.0, Layer::Mid))
+					.insert_bundle(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
 					.id();
 				commands
 					.entity(hero_id)
@@ -135,7 +135,7 @@ pub fn control_hero(
 						texture_atlas: sprite_sheets.thrust_attack.clone(),
 						..Default::default()
 					})
-					.insert_bundle(transform_bundle(TILE_SIZE, 0.0, Layer::Mid))
+					.insert_bundle(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
 					.id();
 				commands
 					.entity(hero_id)

@@ -12,7 +12,7 @@ pub struct SpriteSheets {
 	pub shield: Handle<TextureAtlas>,
 }
 
-type Size = bevy::math::Size<usize>;
+type Size = bevy::ui::Size<usize>;
 
 impl SpriteSheets {
 	pub fn new(

@@ -2,7 +2,7 @@ use crate::{
 	component::{
 		animation::{SimpleAnimation, SimpleFrame},
 		collider::RectangleCollider,
-		transform_bundle, Direction, Heart, Layer, Terrain, TileCoords,
+		spatial_bundle, Direction, Heart, Layer, Terrain, TileCoords,
 	},
 	constants::*,
 	resource::SpriteSheets,
@@ -82,7 +82,7 @@ impl Region {
 					texture_atlas: sprite_sheets.terrain.clone(),
 					..Default::default()
 				})
-				.insert_bundle(transform_bundle(
+				.insert_bundle(spatial_bundle(
 					col as f32 * TILE_SIZE,
 					row as f32 * -TILE_SIZE,
 					Layer::Back,
@@ -114,7 +114,7 @@ impl Region {
 					texture_atlas: sprite_sheets.hearts.clone(),
 					..Default::default()
 				})
-				.insert_bundle(transform_bundle(
+				.insert_bundle(spatial_bundle(
 					heart_position.x,
 					heart_position.y,
 					Layer::Mid,

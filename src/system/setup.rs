@@ -2,14 +2,13 @@ use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
 		collider::RectangleCollider,
-		transform_bundle, Direction, Health, Hero, Layer, Velocity,
+		spatial_bundle, Direction, Health, Hero, Layer, Velocity,
 	},
 	constants::*,
 	resource::{Region, SpriteSheets},
 };
 
 use bevy::prelude::*;
-use bevy_pixel_camera::PixelCameraBundle;
 
 pub fn setup(
 	mut commands: Commands,
@@ -19,7 +18,9 @@ pub fn setup(
 	let sprite_sheets =
 		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
 
-	commands.spawn_bundle(PixelCameraBundle::from_zoom(2));
+	// TODO: Reenable if dependency incompatibility is resolved.
+	//commands.spawn_bundle(PixelCameraBundle::from_zoom(2));
+	commands.spawn_bundle(Camera2dBundle::default());
 
 	commands
 		.spawn_bundle((
@@ -46,7 +47,7 @@ pub fn setup(
 			texture_atlas: sprite_sheets.character.clone(),
 			..Default::default()
 		})
-		.insert_bundle(transform_bundle(TILE_SIZE, -TILE_SIZE, Layer::Top));
+		.insert_bundle(spatial_bundle(TILE_SIZE, -TILE_SIZE, Layer::Top));
 
 	let region =
 		Region::load(&mut commands, &sprite_sheets, "assets/regions/test.ron");
