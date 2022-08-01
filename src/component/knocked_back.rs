@@ -1,9 +1,6 @@
-use crate::{
-	component::{Position, Velocity},
-	constants::*,
-};
+use crate::{component::Velocity, constants::*};
 
-use bevy::prelude::Component;
+use bevy::{math::Vec2, prelude::Component};
 
 /// Makes a character be knocked back with some velocity for a short duration.
 #[derive(Component)]
@@ -14,7 +11,7 @@ pub struct KnockedBack {
 
 impl KnockedBack {
 	/// Knocked back in the direction from `from` to `to`, at standard speed.
-	pub fn from_positions(from: &Position, to: &Position) -> Self {
+	pub fn from_positions(from: &Vec2, to: &Vec2) -> Self {
 		let mut velocity = Velocity {
 			x: to.x - from.x,
 			y: to.y - from.y,

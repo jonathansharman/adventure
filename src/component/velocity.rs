@@ -6,14 +6,14 @@ pub struct Velocity {
 	pub y: f32,
 }
 
-impl Default for Velocity {
-	fn default() -> Self {
+impl Velocity {
+	pub fn zero() -> Self {
 		Self { x: 0.0, y: 0.0 }
 	}
 }
 
-impl Velocity {
-	pub fn zero() -> Self {
-		Self::default()
+impl Default for Velocity {
+	fn default() -> Self {
+		Self::zero()
 	}
 }

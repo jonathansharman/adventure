@@ -1,8 +1,11 @@
 use crate::{
 	component::{
-		Direction, Hero, KnockedBack, SlashAttack, ThrustAttack, Velocity,
+		animation::{DirectedAnimation, DirectedFrame},
+		transform_bundle, Direction, Hero, KnockedBack, Layer, SlashAttack,
+		SlashSword, ThrustAttack, ThrustSword, Velocity,
 	},
 	constants::*,
+	resource::SpriteSheets,
 };
 
 use bevy::prelude::*;
@@ -10,6 +13,8 @@ use bevy::prelude::*;
 /// Controls the hero character based on player input.
 pub fn control_hero(
 	mut commands: Commands,
+	asset_server: Res<AssetServer>,
+	mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 	input: Res<Input<KeyCode>>,
 	mut query: Query<
 		(Entity, &mut Velocity, &mut Direction),
@@ -22,7 +27,7 @@ pub fn control_hero(
 		),
 	>,
 ) {
-	for (id, mut velocity, mut direction) in query.iter_mut() {
+	for (hero_id, mut velocity, mut direction) in query.iter_mut() {
 		// Movement
 		let mut vx: i16 = 0;
 		let mut vy: i16 = 0;
@@ -76,12 +81,66 @@ pub fn control_hero(
 				Direction::Left => vx == -1,
 				Direction::Right => vx == 1,
 			};
+			let sprite_sheets = SpriteSheets::new(
+				asset_server.as_ref(),
+				texture_atlases.as_mut(),
+			);
 			if advancing {
 				// Hero is advancing -> thrust attack.
-				commands.entity(id).insert(ThrustAttack::new());
+				let sword_id = commands
+					.spawn_bundle((
+						ThrustSword,
+						Velocity::zero(),
+						*direction,
+						DirectedAnimation::new(
+							*direction,
+							vec![DirectedFrame {
+								up: 0,
+								down: 1,
+								left: 2,
+								right: 3,
+								duration: None,
+							}],
+						),
+					))
+					.insert_bundle(SpriteSheetBundle {
+						texture_atlas: sprite_sheets.thrust_attack.clone(),
+						..Default::default()
+					})
+					.insert_bundle(transform_bundle(TILE_SIZE, 0.0, Layer::Mid))
+					.id();
+				commands
+					.entity(hero_id)
+					.insert(ThrustAttack::new(sword_id))
+					.add_child(sword_id);
 			} else {
 				// Strafing/retreating/standing still -> slash attack.
-				commands.entity(id).insert(SlashAttack::new());
+				let sword_id = commands
+					.spawn_bundle((
+						SlashSword,
+						Velocity::zero(),
+						*direction,
+						DirectedAnimation::new(
+							*direction,
+							vec![DirectedFrame {
+								up: 0,
+								down: 1,
+								left: 2,
+								right: 3,
+								duration: None,
+							}],
+						),
+					))
+					.insert_bundle(SpriteSheetBundle {
+						texture_atlas: sprite_sheets.thrust_attack.clone(),
+						..Default::default()
+					})
+					.insert_bundle(transform_bundle(TILE_SIZE, 0.0, Layer::Mid))
+					.id();
+				commands
+					.entity(hero_id)
+					.insert(SlashAttack::new(sword_id))
+					.add_child(sword_id);
 			}
 		}
 	}

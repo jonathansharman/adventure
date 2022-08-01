@@ -12,12 +12,12 @@ pub struct DirectedAnimation {
 }
 
 impl DirectedAnimation {
-	pub fn new(frames: Vec<DirectedFrame>) -> Self {
+	pub fn new(direction: Direction, frames: Vec<DirectedFrame>) -> Self {
 		Self {
 			frames,
 			frame_index: 0,
 			frame_progress: 0,
-			direction: Direction::Up,
+			direction,
 		}
 	}
 

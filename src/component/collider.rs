@@ -1,6 +1,6 @@
-use crate::component::{Direction, Position};
+use crate::component::Direction;
 
-use bevy::prelude::Component;
+use bevy::{math::Vec2, prelude::Component};
 
 /// Axis-aligned rectangle collider.
 #[derive(Component)]
@@ -17,8 +17,8 @@ pub struct HalfDiskCollider {
 
 /// Determines the area of intersection between two rectangle colliders.
 pub fn rect_rect_intersection_area(
-	first: (&RectangleCollider, &Position),
-	second: (&RectangleCollider, &Position),
+	first: (&RectangleCollider, &Vec2),
+	second: (&RectangleCollider, &Vec2),
 ) -> f32 {
 	let (collider1, pos1) = first;
 	let (collider2, pos2) = second;
@@ -35,22 +35,22 @@ pub fn rect_rect_intersection_area(
 
 /// Determines whether `rectangle` and `half_disk` intersect.
 pub fn rect_intersects_half_disk(
-	rectangle: (&RectangleCollider, &Position),
-	half_disk: (&HalfDiskCollider, &Position, &Direction),
+	rectangle: (&RectangleCollider, &Vec2),
+	half_disk: (&HalfDiskCollider, &Vec2, &Direction),
 ) -> bool {
 	let (rect_collider, rect_pos) = rectangle;
 	let (half_disk_collider, disk_pos, disk_direction) = half_disk;
 	// Find the point inside the rectangle that is closest to the disk's center.
-	let closest = Position {
-		x: disk_pos
+	let closest = Vec2::new(
+		disk_pos
 			.x
 			.max(rect_pos.x - rect_collider.half_width)
 			.min(rect_pos.x + rect_collider.half_width),
-		y: disk_pos
+		disk_pos
 			.y
 			.max(rect_pos.y - rect_collider.half_height)
 			.min(rect_pos.y + rect_collider.half_height),
-	};
+	);
 	// If the closest point is in a different half plane than the half disk,
 	// there is no intersection.
 	if match disk_direction {

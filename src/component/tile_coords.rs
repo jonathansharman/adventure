@@ -1,13 +1,7 @@
 use crate::constants::TILE_SIZE;
 
-use bevy::prelude::Component;
+use bevy::math::Vec2;
 use serde::Deserialize;
-
-#[derive(Clone, Copy, PartialEq, Component)]
-pub struct Position {
-	pub x: f32,
-	pub y: f32,
-}
 
 #[derive(Clone, Copy, PartialEq, Eq, Deserialize)]
 pub struct TileCoords {
@@ -15,17 +9,17 @@ pub struct TileCoords {
 	pub col: usize,
 }
 
-impl From<TileCoords> for Position {
+impl From<TileCoords> for Vec2 {
 	fn from(tile_coords: TileCoords) -> Self {
-		Self {
-			x: tile_coords.col as f32 * TILE_SIZE,
-			y: tile_coords.row as f32 * -TILE_SIZE,
-		}
+		Vec2::new(
+			tile_coords.col as f32 * TILE_SIZE,
+			tile_coords.row as f32 * -TILE_SIZE,
+		)
 	}
 }
 
-impl From<Position> for Option<TileCoords> {
-	fn from(position: Position) -> Self {
+impl TileCoords {
+	pub fn from_position(position: Vec2) -> Option<TileCoords> {
 		if position.x < -0.5 || position.y > 0.5 {
 			None
 		} else {

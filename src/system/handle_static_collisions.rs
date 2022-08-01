@@ -1,20 +1,19 @@
 use crate::{
 	component::{
-		collider::RectangleCollider, Direction, Position, Terrain,
-		WithCharacter,
+		collider::RectangleCollider, Direction, Terrain, WithCharacter,
 	},
 	constants::*,
 	resource::Region,
 };
 
-use bevy::prelude::*;
+use bevy::{math::Vec3Swizzles, prelude::*};
 
 /// Handles collision detection and response for moving bodies against static
 /// obstacles.
 pub fn handle_static_collisions(
 	current_region: Res<Region>,
 	mut character_query: Query<
-		(&RectangleCollider, &mut Position),
+		(&RectangleCollider, &mut Transform),
 		WithCharacter,
 	>,
 	terrain_query: Query<&Terrain>,
@@ -22,32 +21,34 @@ pub fn handle_static_collisions(
 	// Determines if the tile containing (x, y) is a wall.
 	let is_wall = |x, y| {
 		current_region
-			.tile_at_position(Position { x, y })
+			.tile_at_position(Vec2::new(x, y))
 			.map_or(false, |tile| {
 				terrain_query.get(tile).unwrap().blocks_movement()
 			})
 	};
 	// Retrieves the bottom-left and upper-right corners of the given collider
 	// and position.
-	let get_low_high = |collider: &RectangleCollider, position: &Position| {
-		let low = Position {
-			x: position.x - collider.half_width,
-			y: position.y - collider.half_height,
-		};
-		let high = Position {
-			x: position.x + collider.half_width,
-			y: position.y + collider.half_height,
-		};
+	let get_low_high = |collider: &RectangleCollider, position: Vec2| {
+		let low = Vec2::new(
+			position.x - collider.half_width,
+			position.y - collider.half_height,
+		);
+		let high = Vec2::new(
+			position.x + collider.half_width,
+			position.y + collider.half_height,
+		);
 		(low, high)
 	};
 	// Push characters out of obstacles.
-	for (collider, mut position) in character_query.iter_mut() {
-		let (low, high) = get_low_high(collider, &position);
+	for (collider, mut transform) in character_query.iter_mut() {
+		let (low, high) = get_low_high(collider, transform.translation.xy());
 
 		// Compute how far each collider edge extends into its containing tile.
-		let tile_center = |position: Position| Position {
-			x: TILE_SIZE * (position.x / TILE_SIZE + 0.5).floor(),
-			y: TILE_SIZE * (position.y / TILE_SIZE - 0.5).ceil(),
+		let tile_center = |position: Vec2| {
+			Vec2::new(
+				TILE_SIZE * (position.x / TILE_SIZE + 0.5).floor(),
+				TILE_SIZE * (position.y / TILE_SIZE - 0.5).ceil(),
+			)
 		};
 		let low_center = tile_center(low);
 		let high_center = tile_center(high);
@@ -155,10 +156,10 @@ pub fn handle_static_collisions(
 			// If there was a single corner hit, perform the push.
 			if let Some(push_direction) = push_direction {
 				match push_direction {
-					Direction::Up => position.y += min_push,
-					Direction::Down => position.y -= min_push,
-					Direction::Right => position.x += min_push,
-					Direction::Left => position.x -= min_push,
+					Direction::Up => transform.translation.y += min_push,
+					Direction::Down => transform.translation.y -= min_push,
+					Direction::Right => transform.translation.x += min_push,
+					Direction::Left => transform.translation.x -= min_push,
 				};
 			}
 		} else {
@@ -169,14 +170,14 @@ pub fn handle_static_collisions(
 			// pushing when just one corner overlaps results in false positives,
 			// and the single corner case is handled above.
 			if bottom_weight > top_weight && bottom_weight >= 2 {
-				position.y += bottom_extent;
+				transform.translation.y += bottom_extent;
 			} else if top_weight > bottom_weight && top_weight >= 2 {
-				position.y -= top_extent;
+				transform.translation.y -= top_extent;
 			}
 			if left_weight > right_weight && left_weight >= 2 {
-				position.x += left_extent;
+				transform.translation.x += left_extent;
 			} else if right_weight > left_weight && right_weight >= 2 {
-				position.x -= right_extent;
+				transform.translation.x -= right_extent;
 			}
 		}
 	}

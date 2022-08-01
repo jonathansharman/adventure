@@ -2,13 +2,14 @@ use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
 		collider::RectangleCollider,
-		Direction, Health, Hero, Position, Velocity,
+		transform_bundle, Direction, Health, Hero, Layer, Velocity,
 	},
 	constants::*,
 	resource::{Region, SpriteSheets},
 };
 
 use bevy::prelude::*;
+use bevy_pixel_camera::PixelCameraBundle;
 
 pub fn setup(
 	mut commands: Commands,
@@ -18,31 +19,34 @@ pub fn setup(
 	let sprite_sheets =
 		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
 
-	commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+	commands.spawn_bundle(PixelCameraBundle::from_zoom(2));
 
 	commands
 		.spawn_bundle((
 			Hero,
 			Health::new(HERO_BASE_HEALTH),
-			Position { x: 0.0, y: 0.0 },
 			Velocity::zero(),
 			Direction::Down,
 			RectangleCollider {
 				half_width: 0.5 * TILE_SIZE,
 				half_height: 0.5 * TILE_SIZE,
 			},
-			DirectedAnimation::new(vec![DirectedFrame {
-				up: 0,
-				down: 1,
-				left: 2,
-				right: 3,
-				duration: None,
-			}]),
+			DirectedAnimation::new(
+				Direction::Down,
+				vec![DirectedFrame {
+					up: 0,
+					down: 1,
+					left: 2,
+					right: 3,
+					duration: None,
+				}],
+			),
 		))
 		.insert_bundle(SpriteSheetBundle {
 			texture_atlas: sprite_sheets.character.clone(),
 			..Default::default()
-		});
+		})
+		.insert_bundle(transform_bundle(TILE_SIZE, -TILE_SIZE, Layer::Top));
 
 	let region =
 		Region::load(&mut commands, &sprite_sheets, "assets/regions/test.ron");

@@ -2,13 +2,13 @@ use crate::{
 	component::{
 		animation::{SimpleAnimation, SimpleFrame},
 		collider::RectangleCollider,
-		Direction, Heart, Position, Terrain, TileCoords,
+		transform_bundle, Direction, Heart, Layer, Terrain, TileCoords,
 	},
 	constants::*,
 	resource::SpriteSheets,
 };
 
-use bevy::{ecs::entity::Entity, prelude::*};
+use bevy::prelude::*;
 use ron::de::from_reader;
 use serde::Deserialize;
 
@@ -71,14 +71,6 @@ impl Region {
 		for (i, terrain) in data.terrain.iter().enumerate() {
 			// Compute row/column indices.
 			let (row, col) = (i / data.col_count, i % data.col_count);
-			// Set transform.
-			let tile_translation = Transform::from_translation(Vec3::new(
-				col as f32 * 2.0 * TILE_SIZE,
-				row as f32 * -2.0 * TILE_SIZE,
-				0.0,
-			));
-			let tile_scale = Transform::from_scale(Vec3::new(2.0, 2.0, 1.0));
-			let tile_transform = tile_translation.mul_transform(tile_scale);
 			// Add the tile to the world and the region's tile list, and track
 			// its collisions.
 			let tile = commands
@@ -88,9 +80,13 @@ impl Region {
 						..Default::default()
 					},
 					texture_atlas: sprite_sheets.terrain.clone(),
-					transform: tile_transform,
 					..Default::default()
 				})
+				.insert_bundle(transform_bundle(
+					col as f32 * TILE_SIZE,
+					row as f32 * -TILE_SIZE,
+					Layer::Back,
+				))
 				.insert(*terrain)
 				.id();
 			tiles.push(tile);
@@ -98,7 +94,7 @@ impl Region {
 
 		// Generate hearts.
 		for heart_location in data.heart_locations {
-			let heart_position: Position = heart_location.into();
+			let heart_position: Vec2 = heart_location.into();
 			let heart_collider = RectangleCollider {
 				half_width: 0.5 * HEART_WIDTH,
 				half_height: 0.5 * HEART_HEIGHT,
@@ -110,7 +106,6 @@ impl Region {
 			commands
 				.spawn_bundle((
 					Heart,
-					heart_position,
 					Direction::Down,
 					heart_collider,
 					heart_animation,
@@ -118,7 +113,12 @@ impl Region {
 				.insert_bundle(SpriteSheetBundle {
 					texture_atlas: sprite_sheets.hearts.clone(),
 					..Default::default()
-				});
+				})
+				.insert_bundle(transform_bundle(
+					heart_position.x,
+					heart_position.y,
+					Layer::Mid,
+				));
 		}
 
 		Self {
@@ -158,8 +158,8 @@ impl Region {
 	}
 
 	/// Gets the tile at `position`, if any.
-	pub fn tile_at_position(&self, position: Position) -> Option<Entity> {
-		Option::<TileCoords>::from(position)
+	pub fn tile_at_position(&self, position: Vec2) -> Option<Entity> {
+		TileCoords::from_position(position)
 			.and_then(|tile_coords| self.tile_at_tile_coords(tile_coords))
 	}
 }

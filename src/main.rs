@@ -13,24 +13,25 @@ use crate::{
 };
 
 use bevy::{core::FixedTimestep, prelude::*};
+use bevy_pixel_camera::PixelCameraPlugin;
 
 fn main() {
 	App::new()
 		.add_startup_system(setup)
-		.add_stage(
+		.add_system(control_hero)
+		.add_stage_before(
+			CoreStage::Update,
 			"fixed_update",
 			SystemStage::parallel()
 				.with_run_criteria(FixedTimestep::step(TIMESTEP))
-				.with_system(control_hero)
 				.with_system(slash.after(control_hero))
 				.with_system(thrust.after(control_hero))
 				.with_system(move_entities.after(slash).after(thrust))
 				.with_system(handle_static_collisions.after(move_entities))
-				.with_system(animate_simple.after(handle_static_collisions))
-				.with_system(
-					animate_directional.after(handle_static_collisions),
-				)
-				.with_system(control_camera.after(animate_directional)),
+				.with_system(update_children.after(handle_static_collisions))
+				.with_system(animate_simple.after(update_children))
+				.with_system(animate_directed.after(update_children))
+				.with_system(control_camera.after(animate_directed)),
 		)
 		.insert_resource(WindowDescriptor {
 			title: "Adventure".to_string(),
@@ -40,6 +41,7 @@ fn main() {
 		})
 		.insert_resource(ClearColor(Color::BLACK))
 		.add_plugins(DefaultPlugins)
+		.add_plugin(PixelCameraPlugin)
 		.run();
 }
 
@@ -51,6 +53,7 @@ fn slash(
 		*velocity = Velocity::zero();
 		if slash_attack.tick() == 0 {
 			commands.entity(id).remove::<SlashAttack>();
+			commands.entity(slash_attack.sword_id()).despawn_recursive();
 		}
 	}
 }
@@ -86,6 +89,9 @@ fn thrust(
 		// Reduce frames left and return control if finished thrusting.
 		if thrust_attack.tick() == 0 {
 			commands.entity(id).remove::<ThrustAttack>();
+			commands
+				.entity(thrust_attack.sword_id())
+				.despawn_recursive();
 		}
 	}
 }
