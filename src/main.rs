@@ -13,6 +13,7 @@ use crate::{
 };
 
 use bevy::{prelude::*, time::FixedTimestep};
+use bevy_pixel_camera::PixelCameraPlugin;
 
 fn main() {
 	App::new()
@@ -40,8 +41,7 @@ fn main() {
 		})
 		.insert_resource(ClearColor(Color::BLACK))
 		.add_plugins(DefaultPlugins)
-		// TODO: Reenable if dependency incompatibility is resolved.
-		//.add_plugin(PixelCameraPlugin)
+		.add_plugin(PixelCameraPlugin)
 		.run();
 }
 

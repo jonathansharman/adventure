@@ -9,6 +9,7 @@ use crate::{
 };
 
 use bevy::prelude::*;
+use bevy_pixel_camera::PixelCameraBundle;
 
 pub fn setup(
 	mut commands: Commands,
@@ -18,9 +19,7 @@ pub fn setup(
 	let sprite_sheets =
 		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
 
-	// TODO: Reenable if dependency incompatibility is resolved.
-	//commands.spawn_bundle(PixelCameraBundle::from_zoom(2));
-	commands.spawn_bundle(Camera2dBundle::default());
+	commands.spawn_bundle(PixelCameraBundle::from_zoom(2));
 
 	commands
 		.spawn_bundle((

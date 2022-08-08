@@ -5,8 +5,7 @@ version = "0.1.0"
 
 [dependencies]
 bevy = "0.8.0"
-# TODO: There seems to be a dependency conflict here at the moment.
-#bevy_pixel_camera = "0.1.3"
+bevy_pixel_camera = "0.2.0"
 rand = "0.8.5"
 ron = "0.7.1"
-serde = "1.0.140"
+serde = "1.0.142"
