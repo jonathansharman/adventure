@@ -40,6 +40,7 @@ fn main() {
 			..Default::default()
 		})
 		.insert_resource(ClearColor(Color::BLACK))
+		.insert_resource(bevy::render::texture::ImageSettings::default_nearest())
 		.add_plugins(DefaultPlugins)
 		.add_plugin(PixelCameraPlugin)
 		.run();
