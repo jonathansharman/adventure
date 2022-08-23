@@ -40,6 +40,9 @@ fn main() {
 			..Default::default()
 		})
 		.insert_resource(ClearColor(Color::BLACK))
+		// Disable anti-aliasing.
+		.insert_resource(Msaa { samples: 1 })
+		// Use nearest sampling rather than linear interpolation.
 		.insert_resource(bevy::render::texture::ImageSettings::default_nearest())
 		.add_plugins(DefaultPlugins)
 		.add_plugin(PixelCameraPlugin)
