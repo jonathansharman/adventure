@@ -88,7 +88,7 @@ pub fn control_hero(
 			if advancing {
 				// Hero is advancing -> thrust attack.
 				let sword_id = commands
-					.spawn_bundle((
+					.spawn((
 						ThrustSword,
 						Velocity::zero(),
 						*direction,
@@ -103,11 +103,11 @@ pub fn control_hero(
 							}],
 						),
 					))
-					.insert_bundle(SpriteSheetBundle {
+					.insert(SpriteSheetBundle {
 						texture_atlas: sprite_sheets.thrust_attack.clone(),
 						..Default::default()
 					})
-					.insert_bundle(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
+					.insert(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
 					.id();
 				commands
 					.entity(hero_id)
@@ -116,7 +116,7 @@ pub fn control_hero(
 			} else {
 				// Strafing/retreating/standing still -> slash attack.
 				let sword_id = commands
-					.spawn_bundle((
+					.spawn((
 						SlashSword,
 						Velocity::zero(),
 						*direction,
@@ -131,11 +131,11 @@ pub fn control_hero(
 							}],
 						),
 					))
-					.insert_bundle(SpriteSheetBundle {
+					.insert(SpriteSheetBundle {
 						texture_atlas: sprite_sheets.thrust_attack.clone(),
 						..Default::default()
 					})
-					.insert_bundle(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
+					.insert(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
 					.id();
 				commands
 					.entity(hero_id)

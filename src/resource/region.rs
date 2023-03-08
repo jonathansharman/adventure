@@ -47,7 +47,7 @@ struct EnemyData {
 }
 
 /// A set of tiles representing a game region, with links to other regions.
-#[derive(PartialEq, Eq, Clone)]
+#[derive(Resource, PartialEq, Eq, Clone)]
 pub struct Region {
 	row_count: usize,
 	col_count: usize,
@@ -74,7 +74,7 @@ impl Region {
 			// Add the tile to the world and the region's tile list, and track
 			// its collisions.
 			let tile = commands
-				.spawn_bundle(SpriteSheetBundle {
+				.spawn(SpriteSheetBundle {
 					sprite: TextureAtlasSprite {
 						index: *terrain as usize,
 						..Default::default()
@@ -82,7 +82,7 @@ impl Region {
 					texture_atlas: sprite_sheets.terrain.clone(),
 					..Default::default()
 				})
-				.insert_bundle(spatial_bundle(
+				.insert(spatial_bundle(
 					col as f32 * TILE_SIZE,
 					row as f32 * -TILE_SIZE,
 					Layer::Back,
@@ -104,17 +104,17 @@ impl Region {
 				duration: None,
 			}]);
 			commands
-				.spawn_bundle((
+				.spawn((
 					Heart,
 					Direction::Down,
 					heart_collider,
 					heart_animation,
 				))
-				.insert_bundle(SpriteSheetBundle {
+				.insert(SpriteSheetBundle {
 					texture_atlas: sprite_sheets.hearts.clone(),
 					..Default::default()
 				})
-				.insert_bundle(spatial_bundle(
+				.insert(spatial_bundle(
 					heart_position.x,
 					heart_position.y,
 					Layer::Mid,

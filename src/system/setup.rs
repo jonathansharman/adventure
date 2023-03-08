@@ -19,10 +19,10 @@ pub fn setup(
 	let sprite_sheets =
 		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
 
-	commands.spawn_bundle(PixelCameraBundle::from_zoom(2));
+	commands.spawn(PixelCameraBundle::from_zoom(2));
 
 	commands
-		.spawn_bundle((
+		.spawn((
 			Hero,
 			Health::new(HERO_BASE_HEALTH),
 			Velocity::zero(),
@@ -42,11 +42,11 @@ pub fn setup(
 				}],
 			),
 		))
-		.insert_bundle(SpriteSheetBundle {
+		.insert(SpriteSheetBundle {
 			texture_atlas: sprite_sheets.character.clone(),
 			..Default::default()
 		})
-		.insert_bundle(spatial_bundle(TILE_SIZE, -TILE_SIZE, Layer::Top));
+		.insert(spatial_bundle(TILE_SIZE, -TILE_SIZE, Layer::Top));
 
 	let region =
 		Region::load(&mut commands, &sprite_sheets, "assets/regions/test.ron");

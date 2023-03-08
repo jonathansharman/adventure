@@ -1,5 +1,5 @@
 /// Timestep in seconds per frame.
-pub const TIMESTEP: f64 = 1.0 / 60.0;
+pub const TIMESTEP: f32 = 1.0 / 60.0;
 
 /// The side length of a tile in the world, in texels (not pixels).
 pub const TILE_SIZE: f32 = 20.0;

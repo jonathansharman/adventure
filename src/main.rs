@@ -12,39 +12,43 @@ use crate::{
 	system::*,
 };
 
-use bevy::{prelude::*, time::FixedTimestep};
+use bevy::prelude::*;
 use bevy_pixel_camera::PixelCameraPlugin;
 
 fn main() {
 	App::new()
 		.add_startup_system(setup)
 		.add_system(control_hero)
-		.add_stage_before(
-			CoreStage::Update,
-			"fixed_update",
-			SystemStage::parallel()
-				.with_run_criteria(FixedTimestep::step(TIMESTEP))
-				.with_system(slash)
-				.with_system(thrust)
-				.with_system(move_entities.after(slash).after(thrust))
-				.with_system(handle_static_collisions.after(move_entities))
-				.with_system(update_children.after(handle_static_collisions))
-				.with_system(animate_simple.after(update_children))
-				.with_system(animate_directed.after(update_children))
-				.with_system(control_camera.after(animate_directed)),
+		.add_systems(
+			(
+				slash,
+				thrust,
+				move_entities.after(slash).after(thrust),
+				handle_static_collisions.after(move_entities),
+				update_children.after(handle_static_collisions),
+				animate_simple.after(update_children),
+				animate_directed.after(update_children),
+				control_camera.after(animate_directed),
+			)
+				.in_schedule(CoreSchedule::FixedUpdate),
 		)
-		.insert_resource(WindowDescriptor {
-			title: "Adventure".to_string(),
-			width: 800.0,
-			height: 600.0,
-			..Default::default()
-		})
+		.insert_resource(FixedTime::new_from_secs(TIMESTEP))
 		.insert_resource(ClearColor(Color::BLACK))
 		// Disable anti-aliasing.
-		.insert_resource(Msaa { samples: 1 })
-		// Use nearest sampling rather than linear interpolation.
-		.insert_resource(bevy::render::texture::ImageSettings::default_nearest())
-		.add_plugins(DefaultPlugins)
+		.insert_resource(Msaa::Off)
+		.add_plugins(
+			DefaultPlugins
+				.set(WindowPlugin {
+					primary_window: Some(Window {
+						title: "Adventure".to_string(),
+						resolution: (800.0, 600.0).into(),
+						..default()
+					}),
+					..default()
+				})
+				// Use nearest sampling rather than linear interpolation.
+				.set(ImagePlugin::default_nearest()),
+		)
 		.add_plugin(PixelCameraPlugin)
 		.run();
 }
