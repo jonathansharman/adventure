@@ -1,21 +1,20 @@
-use crate::{component::Velocity, constants::*};
+use crate::constants::*;
 
-use bevy::{math::Vec2, prelude::Component};
+use bevy::prelude::*;
+use bevy_xpbd_2d::{math::Vector, prelude::*};
 
 /// Makes a character be knocked back with some velocity for a short duration.
 #[derive(Component)]
 pub struct KnockedBack {
-	velocity: Velocity,
+	velocity: LinearVelocity,
 	frames_left: u32,
 }
 
 impl KnockedBack {
 	/// Knocked back in the direction from `from` to `to`, at standard speed.
-	pub fn from_positions(from: &Vec2, to: &Vec2) -> Self {
-		let mut velocity = Velocity {
-			x: to.x - from.x,
-			y: to.y - from.y,
-		};
+	pub fn from_positions(from: &Vector, to: &Vector) -> Self {
+		let mut velocity =
+			LinearVelocity(Vector::new(to.x - from.x, to.y - from.y));
 		// Normalize knockback velocity to the desired speed.
 		if velocity.x != 0.0 || velocity.y != 0.0 {
 			let magnitude = f32::sqrt(velocity.x.powi(2) + velocity.y.powi(2));
@@ -32,7 +31,7 @@ impl KnockedBack {
 		}
 	}
 
-	pub fn velocity(&self) -> Velocity {
+	pub fn velocity(&self) -> LinearVelocity {
 		self.velocity
 	}
 

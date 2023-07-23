@@ -7,13 +7,14 @@ mod resource;
 mod system;
 
 use crate::{
-	component::{Direction, SlashAttack, ThrustAttack, Velocity},
+	component::{Direction, SlashAttack, ThrustAttack},
 	constants::*,
 	system::*,
 };
 
 use bevy::prelude::*;
 use bevy_pixel_camera::PixelCameraPlugin;
+use bevy_xpbd_2d::{math::Vector, prelude::*};
 
 fn main() {
 	App::new()
@@ -23,8 +24,6 @@ fn main() {
 			FixedUpdate,
 			(
 				(slash, thrust),
-				move_entities,
-				handle_static_collisions,
 				update_children,
 				(animate_simple, (animate_directed, control_camera).chain()),
 			)
@@ -34,6 +33,7 @@ fn main() {
 		.insert_resource(ClearColor(Color::BLACK))
 		// Disable anti-aliasing.
 		.insert_resource(Msaa::Off)
+		.insert_resource(Gravity(Vector::ZERO))
 		.add_plugins((
 			DefaultPlugins
 				.set(WindowPlugin {
@@ -47,16 +47,17 @@ fn main() {
 				// Use nearest sampling rather than linear interpolation.
 				.set(ImagePlugin::default_nearest()),
 			PixelCameraPlugin,
+			PhysicsPlugins::default(),
 		))
 		.run();
 }
 
 fn slash(
 	mut commands: Commands,
-	mut query: Query<(Entity, &mut Velocity, &mut SlashAttack)>,
+	mut query: Query<(Entity, &mut LinearVelocity, &mut SlashAttack)>,
 ) {
 	for (id, mut velocity, mut slash_attack) in query.iter_mut() {
-		*velocity = Velocity::zero();
+		*velocity = LinearVelocity(Vector::ZERO);
 		if slash_attack.tick() == 0 {
 			commands.entity(id).remove::<SlashAttack>();
 			commands.entity(slash_attack.sword_id()).despawn_recursive();
@@ -66,31 +67,30 @@ fn slash(
 
 fn thrust(
 	mut commands: Commands,
-	mut query: Query<(Entity, &mut Velocity, &Direction, &mut ThrustAttack)>,
+	mut query: Query<(
+		Entity,
+		&mut LinearVelocity,
+		&Direction,
+		&mut ThrustAttack,
+	)>,
 ) {
 	for (id, mut velocity, direction, mut thrust_attack) in query.iter_mut() {
 		// Rush forward if the thrust is active or else stand still.
 		*velocity = if thrust_attack.is_active() {
 			match direction {
-				Direction::Up => Velocity {
-					x: 0.0,
-					y: THRUST_SPEED,
-				},
-				Direction::Down => Velocity {
-					x: 0.0,
-					y: -THRUST_SPEED,
-				},
-				Direction::Left => Velocity {
-					x: -THRUST_SPEED,
-					y: 0.0,
-				},
-				Direction::Right => Velocity {
-					x: THRUST_SPEED,
-					y: 0.0,
-				},
+				Direction::Up => LinearVelocity(Vector::new(0.0, THRUST_SPEED)),
+				Direction::Down => {
+					LinearVelocity(Vector::new(0.0, -THRUST_SPEED))
+				}
+				Direction::Left => {
+					LinearVelocity(Vector::new(-THRUST_SPEED, 0.0))
+				}
+				Direction::Right => {
+					LinearVelocity(Vector::new(THRUST_SPEED, 0.0))
+				}
 			}
 		} else {
-			Velocity { x: 0.0, y: 0.0 }
+			LinearVelocity(Vector::ZERO)
 		};
 		// Reduce frames left and return control if finished thrusting.
 		if thrust_attack.tick() == 0 {

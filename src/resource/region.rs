@@ -1,14 +1,14 @@
 use crate::{
 	component::{
 		animation::{SimpleAnimation, SimpleFrame},
-		collider::RectangleCollider,
-		spatial_bundle, Direction, Heart, Layer, Terrain, TileCoords,
+		Direction, Heart, Layer, Terrain, TileCoords,
 	},
 	constants::*,
 	resource::SpriteSheets,
 };
 
 use bevy::prelude::*;
+use bevy_xpbd_2d::{math::Vector, prelude::*};
 use ron::de::from_reader;
 use serde::Deserialize;
 
@@ -71,54 +71,54 @@ impl Region {
 		for (i, terrain) in data.terrain.iter().enumerate() {
 			// Compute row/column indices.
 			let (row, col) = (i / data.col_count, i % data.col_count);
-			// Add the tile to the world and the region's tile list, and track
-			// its collisions.
+			// Add the tile to the world and the region's tile list.
 			let tile = commands
-				.spawn(SpriteSheetBundle {
-					sprite: TextureAtlasSprite {
-						index: *terrain as usize,
+				.spawn((
+					*terrain,
+					Layer::Back,
+					RigidBody::Static,
+					Position(Vector::new(
+						col as f32 * TILE_SIZE,
+						row as f32 * -TILE_SIZE,
+					)),
+					SpriteSheetBundle {
+						sprite: TextureAtlasSprite {
+							index: *terrain as usize,
+							..Default::default()
+						},
+						texture_atlas: sprite_sheets.terrain.clone(),
 						..Default::default()
 					},
-					texture_atlas: sprite_sheets.terrain.clone(),
-					..Default::default()
-				})
-				.insert(spatial_bundle(
-					col as f32 * TILE_SIZE,
-					row as f32 * -TILE_SIZE,
-					Layer::Back,
 				))
-				.insert(*terrain)
 				.id();
+			if terrain.blocks_movement() {
+				commands.entity(tile).insert((
+					Collider::cuboid(TILE_SIZE, TILE_SIZE),
+					Friction::ZERO,
+				));
+			}
 			tiles.push(tile);
 		}
 
 		// Generate hearts.
 		for heart_location in data.heart_locations {
-			let heart_position: Vec2 = heart_location.into();
-			let heart_collider = RectangleCollider {
-				half_width: 0.5 * HEART_WIDTH,
-				half_height: 0.5 * HEART_HEIGHT,
-			};
-			let heart_animation = SimpleAnimation::new(vec![SimpleFrame {
-				sprite_index: 1,
-				duration: None,
-			}]);
-			commands
-				.spawn((
-					Heart,
-					Direction::Down,
-					heart_collider,
-					heart_animation,
-				))
-				.insert(SpriteSheetBundle {
+			commands.spawn((
+				Heart,
+				RigidBody::Dynamic,
+				Position(heart_location.into()),
+				Collider::cuboid(HEART_WIDTH, HEART_HEIGHT),
+				Sensor,
+				Direction::Down,
+				Layer::Mid,
+				SimpleAnimation::new(vec![SimpleFrame {
+					sprite_index: 1,
+					duration: None,
+				}]),
+				SpriteSheetBundle {
 					texture_atlas: sprite_sheets.hearts.clone(),
 					..Default::default()
-				})
-				.insert(spatial_bundle(
-					heart_position.x,
-					heart_position.y,
-					Layer::Mid,
-				));
+				},
+			));
 		}
 
 		Self {

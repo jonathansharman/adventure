@@ -1,8 +1,7 @@
 use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
-		collider::RectangleCollider,
-		spatial_bundle, Direction, Health, Hero, Layer, Velocity,
+		Direction, Health, Hero, Layer,
 	},
 	constants::*,
 	resource::{Region, SpriteSheets},
@@ -10,6 +9,7 @@ use crate::{
 
 use bevy::prelude::*;
 use bevy_pixel_camera::PixelCameraBundle;
+use bevy_xpbd_2d::{math::Vector, prelude::*};
 
 pub fn setup(
 	mut commands: Commands,
@@ -21,32 +21,31 @@ pub fn setup(
 
 	commands.spawn(PixelCameraBundle::from_zoom(2));
 
-	commands
-		.spawn((
-			Hero,
-			Health::new(HERO_BASE_HEALTH),
-			Velocity::zero(),
+	commands.spawn((
+		Hero,
+		Health::new(HERO_BASE_HEALTH),
+		RigidBody::Dynamic,
+		Position(Vector::new(TILE_SIZE, -TILE_SIZE)),
+		Collider::cuboid(TILE_SIZE, TILE_SIZE),
+		Friction::ZERO,
+		LockedAxes::new().lock_rotation(),
+		Direction::Down,
+		Layer::Front,
+		DirectedAnimation::new(
 			Direction::Down,
-			RectangleCollider {
-				half_width: 0.5 * TILE_SIZE,
-				half_height: 0.5 * TILE_SIZE,
-			},
-			DirectedAnimation::new(
-				Direction::Down,
-				vec![DirectedFrame {
-					up: 0,
-					down: 1,
-					left: 2,
-					right: 3,
-					duration: None,
-				}],
-			),
-		))
-		.insert(SpriteSheetBundle {
+			vec![DirectedFrame {
+				up: 0,
+				down: 1,
+				left: 2,
+				right: 3,
+				duration: None,
+			}],
+		),
+		SpriteSheetBundle {
 			texture_atlas: sprite_sheets.character.clone(),
 			..Default::default()
-		})
-		.insert(spatial_bundle(TILE_SIZE, -TILE_SIZE, Layer::Front));
+		},
+	));
 
 	let region =
 		Region::load(&mut commands, &sprite_sheets, "assets/regions/test.ron");

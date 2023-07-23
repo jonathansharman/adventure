@@ -1,14 +1,15 @@
 use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
-		spatial_bundle, Direction, Hero, KnockedBack, Layer, SlashAttack,
-		SlashSword, ThrustAttack, ThrustSword, Velocity,
+		Direction, Hero, KnockedBack, SlashAttack, SlashSword, ThrustAttack,
+		ThrustSword,
 	},
 	constants::*,
 	resource::SpriteSheets,
 };
 
 use bevy::prelude::*;
+use bevy_xpbd_2d::prelude::*;
 
 /// Controls the hero character based on player input.
 pub fn control_hero(
@@ -17,7 +18,7 @@ pub fn control_hero(
 	mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 	input: Res<Input<KeyCode>>,
 	mut query: Query<
-		(Entity, &mut Velocity, &mut Direction),
+		(Entity, &mut LinearVelocity, &mut Direction),
 		(
 			With<Hero>,
 			// Controls are disabled while knocked back or attacking.
@@ -90,7 +91,6 @@ pub fn control_hero(
 				let sword_id = commands
 					.spawn((
 						ThrustSword,
-						Velocity::zero(),
 						*direction,
 						DirectedAnimation::new(
 							*direction,
@@ -102,12 +102,11 @@ pub fn control_hero(
 								duration: None,
 							}],
 						),
+						SpriteSheetBundle {
+							texture_atlas: sprite_sheets.thrust_attack.clone(),
+							..Default::default()
+						},
 					))
-					.insert(SpriteSheetBundle {
-						texture_atlas: sprite_sheets.thrust_attack.clone(),
-						..Default::default()
-					})
-					.insert(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
 					.id();
 				commands
 					.entity(hero_id)
@@ -118,7 +117,6 @@ pub fn control_hero(
 				let sword_id = commands
 					.spawn((
 						SlashSword,
-						Velocity::zero(),
 						*direction,
 						DirectedAnimation::new(
 							*direction,
@@ -130,12 +128,11 @@ pub fn control_hero(
 								duration: None,
 							}],
 						),
+						SpriteSheetBundle {
+							texture_atlas: sprite_sheets.thrust_attack.clone(),
+							..Default::default()
+						},
 					))
-					.insert(SpriteSheetBundle {
-						texture_atlas: sprite_sheets.thrust_attack.clone(),
-						..Default::default()
-					})
-					.insert(spatial_bundle(TILE_SIZE, 0.0, Layer::Mid))
 					.id();
 				commands
 					.entity(hero_id)

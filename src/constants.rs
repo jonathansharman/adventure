@@ -32,12 +32,12 @@ pub const MAX_ARROW_DELAY: u32 = 300;
 /// The speed of a launched arrow.
 pub const ARROW_SPEED: f32 = 10.0;
 
-/// Speed in texels per update while moving orthogonally.
-pub const ORTHOGONAL_SPEED: f32 = 2.0;
-/// Magnitude of x- and y-speed in texels per update while moving diagonally.
+/// Speed while moving orthogonally.
+pub const ORTHOGONAL_SPEED: f32 = 80.0;
+/// Magnitude of x- and y-speed while moving diagonally.
 pub const DIAGONAL_SPEED: f32 =
 	std::f32::consts::FRAC_1_SQRT_2 * ORTHOGONAL_SPEED;
-/// Speed in texels per update while thrusting.
+/// Speed while thrusting.
 pub const THRUST_SPEED: f32 = 2.0 * ORTHOGONAL_SPEED;
 
 /// The speed at which a character is knocked away when hit.
