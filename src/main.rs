@@ -17,26 +17,24 @@ use bevy_pixel_camera::PixelCameraPlugin;
 
 fn main() {
 	App::new()
-		.add_startup_system(setup)
-		.add_system(control_hero)
+		.add_systems(Startup, setup)
+		.add_systems(Update, control_hero)
 		.add_systems(
+			FixedUpdate,
 			(
-				slash,
-				thrust,
-				move_entities.after(slash).after(thrust),
-				handle_static_collisions.after(move_entities),
-				update_children.after(handle_static_collisions),
-				animate_simple.after(update_children),
-				animate_directed.after(update_children),
-				control_camera.after(animate_directed),
+				(slash, thrust),
+				move_entities,
+				handle_static_collisions,
+				update_children,
+				(animate_simple, (animate_directed, control_camera).chain()),
 			)
-				.in_schedule(CoreSchedule::FixedUpdate),
+				.chain(),
 		)
 		.insert_resource(FixedTime::new_from_secs(TIMESTEP))
 		.insert_resource(ClearColor(Color::BLACK))
 		// Disable anti-aliasing.
 		.insert_resource(Msaa::Off)
-		.add_plugins(
+		.add_plugins((
 			DefaultPlugins
 				.set(WindowPlugin {
 					primary_window: Some(Window {
@@ -48,8 +46,8 @@ fn main() {
 				})
 				// Use nearest sampling rather than linear interpolation.
 				.set(ImagePlugin::default_nearest()),
-		)
-		.add_plugin(PixelCameraPlugin)
+			PixelCameraPlugin,
+		))
 		.run();
 }
 
