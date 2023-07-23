@@ -4,16 +4,18 @@ use bevy::{math::Vec3, prelude::*};
 pub enum Layer {
 	Back,
 	Mid,
-	Top,
+	Front,
+	Camera,
 }
 
 impl Layer {
 	/// The z-coordinate of this layer.
-	fn z(&self) -> f32 {
+	pub fn z(&self) -> f32 {
 		match self {
 			Layer::Back => -1.0,
 			Layer::Mid => 0.0,
-			Layer::Top => 1.0,
+			Layer::Front => 1.0,
+			Layer::Camera => 2.0,
 		}
 	}
 }

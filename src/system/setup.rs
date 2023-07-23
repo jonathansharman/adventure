@@ -46,7 +46,7 @@ pub fn setup(
 			texture_atlas: sprite_sheets.character.clone(),
 			..Default::default()
 		})
-		.insert(spatial_bundle(TILE_SIZE, -TILE_SIZE, Layer::Top));
+		.insert(spatial_bundle(TILE_SIZE, -TILE_SIZE, Layer::Front));
 
 	let region =
 		Region::load(&mut commands, &sprite_sheets, "assets/regions/test.ron");

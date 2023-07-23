@@ -1,4 +1,4 @@
-use crate::component::Hero;
+use crate::component::{Hero, Layer};
 
 use bevy::{prelude::*, render::camera::Camera};
 
@@ -9,7 +9,11 @@ pub fn control_camera(
 ) {
 	if let Ok(&hero_translation) = hero_query.get_single() {
 		for mut camera_transform in camera_query.iter_mut() {
-			camera_transform.translation = hero_translation.translation;
+			camera_transform.translation = Vec3::new(
+				hero_translation.translation.x,
+				hero_translation.translation.y,
+				Layer::Camera.z(),
+			);
 		}
 	}
 }
