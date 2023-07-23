@@ -19,17 +19,16 @@ use bevy_xpbd_2d::{math::Vector, prelude::*};
 fn main() {
 	App::new()
 		.add_systems(Startup, setup)
-		.add_systems(Update, control_hero)
 		.add_systems(
-			FixedUpdate,
+			Update,
 			(
+				control_hero,
 				(slash, thrust),
 				update_children,
 				(animate_simple, (animate_directed, control_camera).chain()),
 			)
 				.chain(),
 		)
-		.insert_resource(FixedTime::new_from_secs(TIMESTEP))
 		.insert_resource(ClearColor(Color::BLACK))
 		// Disable anti-aliasing.
 		.insert_resource(Msaa::Off)
@@ -47,7 +46,7 @@ fn main() {
 				// Use nearest sampling rather than linear interpolation.
 				.set(ImagePlugin::default_nearest()),
 			PixelCameraPlugin,
-			PhysicsPlugins::default(),
+			PhysicsPlugins::new(PreUpdate),
 		))
 		.run();
 }
