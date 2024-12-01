@@ -1,14 +1,14 @@
 use crate::{
 	component::{
 		animation::{DirectedAnimation, DirectedFrame},
-		Direction, Health, Hero, Layer,
+		Direction, Health, Hero,
 	},
 	constants::*,
 	resource::{Region, SpriteSheets},
 };
 
 use bevy::prelude::*;
-use bevy_pixel_camera::PixelCameraBundle;
+use bevy_pixel_camera::PixelZoom;
 use bevy_xpbd_2d::{math::Vector, prelude::*};
 
 pub fn setup(
@@ -19,7 +19,7 @@ pub fn setup(
 	let sprite_sheets =
 		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
 
-	commands.spawn(PixelCameraBundle::from_zoom(2));
+	commands.spawn((Camera2dBundle::default(), PixelZoom::Fixed(2)));
 
 	commands.spawn((
 		Hero,
@@ -30,7 +30,6 @@ pub fn setup(
 		Friction::ZERO,
 		LockedAxes::new().lock_rotation(),
 		Direction::Down,
-		Layer::Front,
 		DirectedAnimation::new(
 			Direction::Down,
 			vec![DirectedFrame {
@@ -43,6 +42,7 @@ pub fn setup(
 		),
 		SpriteSheetBundle {
 			texture_atlas: sprite_sheets.character.clone(),
+			transform: Transform::from_translation(Z_FRONT * Vec3::Z),
 			..Default::default()
 		},
 	));

@@ -1,7 +1,7 @@
 use crate::{
 	component::{
 		animation::{SimpleAnimation, SimpleFrame},
-		Direction, Heart, Layer, Terrain, TileCoords,
+		Direction, Heart, Terrain, TileCoords,
 	},
 	constants::*,
 	resource::SpriteSheets,
@@ -75,7 +75,6 @@ impl Region {
 			let tile = commands
 				.spawn((
 					*terrain,
-					Layer::Back,
 					RigidBody::Static,
 					Position(Vector::new(
 						col as f32 * TILE_SIZE,
@@ -87,6 +86,9 @@ impl Region {
 							..Default::default()
 						},
 						texture_atlas: sprite_sheets.terrain.clone(),
+						transform: Transform::from_translation(
+							Z_BACK * Vec3::Z,
+						),
 						..Default::default()
 					},
 				))
@@ -109,13 +111,13 @@ impl Region {
 				Collider::cuboid(HEART_WIDTH, HEART_HEIGHT),
 				Sensor,
 				Direction::Down,
-				Layer::Mid,
 				SimpleAnimation::new(vec![SimpleFrame {
 					sprite_index: 1,
 					duration: None,
 				}]),
 				SpriteSheetBundle {
 					texture_atlas: sprite_sheets.hearts.clone(),
+					transform: Transform::from_translation(Z_MID * Vec3::Z),
 					..Default::default()
 				},
 			));

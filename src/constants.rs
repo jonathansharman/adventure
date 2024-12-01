@@ -54,3 +54,8 @@ pub const INVULNERABLE_BLINK_LUMINANCE: f32 = 0.75;
 pub const HEART_WIDTH: f32 = 26.0;
 /// The height of a heart pickup in the world.
 pub const HEART_HEIGHT: f32 = 24.0;
+
+pub const Z_BACK: f32 = -1.0;
+pub const Z_MID: f32 = 0.0;
+pub const Z_FRONT: f32 = 1.0;
+pub const Z_CAMERA: f32 = 2.0;

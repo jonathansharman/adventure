@@ -108,7 +108,7 @@ impl SpriteSheets {
 fn from_grid(
 	asset_server: &AssetServer,
 	texture_atlases: &mut Assets<TextureAtlas>,
-	path: &str,
+	path: &'static str,
 	cel_size: (usize, usize),
 	grid_size: (usize, usize),
 ) -> Handle<TextureAtlas> {
@@ -125,7 +125,7 @@ fn from_grid(
 fn from_cels(
 	asset_server: &AssetServer,
 	texture_atlases: &mut Assets<TextureAtlas>,
-	path: &str,
+	path: &'static str,
 	texture_size: (usize, usize),
 	cels: &[Rect],
 ) -> Handle<TextureAtlas> {

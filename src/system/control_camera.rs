@@ -1,4 +1,4 @@
-use crate::component::{Hero, Layer};
+use crate::{component::Hero, Z_CAMERA};
 
 use bevy::{prelude::*, render::camera::Camera};
 
@@ -12,7 +12,7 @@ pub fn control_camera(
 			camera_transform.translation = Vec3::new(
 				hero_translation.translation.x,
 				hero_translation.translation.y,
-				Layer::Camera.z(),
+				Z_CAMERA,
 			);
 		}
 	}
