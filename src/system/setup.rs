@@ -14,10 +14,10 @@ use bevy_xpbd_2d::{math::Vector, prelude::*};
 pub fn setup(
 	mut commands: Commands,
 	asset_server: Res<AssetServer>,
-	mut texture_atlases: ResMut<Assets<TextureAtlas>>,
+	mut atlases: ResMut<Assets<TextureAtlasLayout>>,
 ) {
 	let sprite_sheets =
-		SpriteSheets::new(asset_server.as_ref(), texture_atlases.as_mut());
+		SpriteSheets::new(asset_server.as_ref(), atlases.as_mut());
 
 	commands.spawn((Camera2dBundle::default(), PixelZoom::Fixed(2)));
 
@@ -26,7 +26,7 @@ pub fn setup(
 		Health::new(HERO_BASE_HEALTH),
 		RigidBody::Dynamic,
 		Position(Vector::new(TILE_SIZE, -TILE_SIZE)),
-		Collider::cuboid(TILE_SIZE, TILE_SIZE),
+		Collider::rectangle(TILE_SIZE, TILE_SIZE),
 		Friction::ZERO,
 		LockedAxes::new().lock_rotation(),
 		Direction::Down,
@@ -41,7 +41,11 @@ pub fn setup(
 			}],
 		),
 		SpriteSheetBundle {
-			texture_atlas: sprite_sheets.character.clone(),
+			texture: sprite_sheets.character.image.clone(),
+			atlas: TextureAtlas {
+				layout: sprite_sheets.character.layout.clone(),
+				index: 0,
+			},
 			transform: Transform::from_translation(Z_FRONT * Vec3::Z),
 			..Default::default()
 		},

@@ -1,33 +1,39 @@
 use bevy::prelude::*;
 
+#[derive(Debug)]
+pub struct SpriteSheet {
+	pub image: Handle<Image>,
+	pub layout: Handle<TextureAtlasLayout>,
+}
+
 /// Container for all the game's sprite sheets.
 #[derive(Resource, Debug)]
 pub struct SpriteSheets {
-	pub character: Handle<TextureAtlas>,
-	pub slash_attack: Handle<TextureAtlas>,
-	pub thrust_attack: Handle<TextureAtlas>,
-	pub terrain: Handle<TextureAtlas>,
-	pub hearts: Handle<TextureAtlas>,
-	pub arrow_attack: Handle<TextureAtlas>,
-	pub shield: Handle<TextureAtlas>,
+	pub character: SpriteSheet,
+	pub slash_attack: SpriteSheet,
+	pub thrust_attack: SpriteSheet,
+	pub terrain: SpriteSheet,
+	pub hearts: SpriteSheet,
+	pub arrow_attack: SpriteSheet,
+	pub shield: SpriteSheet,
 }
 
 impl SpriteSheets {
 	pub fn new(
 		asset_server: &AssetServer,
-		texture_atlases: &mut Assets<TextureAtlas>,
+		atlases: &mut Assets<TextureAtlasLayout>,
 	) -> Self {
 		Self {
 			character: from_grid(
 				asset_server,
-				texture_atlases,
+				atlases,
 				"sprites/character.png",
 				(20, 20),
 				(4, 1),
 			),
 			slash_attack: from_cels(
 				asset_server,
-				texture_atlases,
+				atlases,
 				"sprites/slash_attack.png",
 				(80, 40),
 				&[
@@ -51,35 +57,35 @@ impl SpriteSheets {
 			),
 			thrust_attack: from_grid(
 				asset_server,
-				texture_atlases,
+				atlases,
 				"sprites/thrust_attack.png",
 				(20, 20),
 				(4, 1),
 			),
 			terrain: from_grid(
 				asset_server,
-				texture_atlases,
+				atlases,
 				"sprites/terrain.png",
 				(20, 20),
 				(4, 3),
 			),
 			hearts: from_grid(
 				asset_server,
-				texture_atlases,
+				atlases,
 				"sprites/hearts.png",
 				(13, 12),
 				(3, 1),
 			),
 			arrow_attack: from_grid(
 				asset_server,
-				texture_atlases,
+				atlases,
 				"sprites/arrow_attack.png",
 				(20, 20),
 				(4, 1),
 			),
 			shield: from_cels(
 				asset_server,
-				texture_atlases,
+				atlases,
 				"sprites/shield.png",
 				(32, 20),
 				&[
@@ -107,34 +113,39 @@ impl SpriteSheets {
 
 fn from_grid(
 	asset_server: &AssetServer,
-	texture_atlases: &mut Assets<TextureAtlas>,
+	atlases: &mut Assets<TextureAtlasLayout>,
 	path: &'static str,
 	cel_size: (usize, usize),
 	grid_size: (usize, usize),
-) -> Handle<TextureAtlas> {
-	texture_atlases.add(TextureAtlas::from_grid(
-		asset_server.load(path),
-		Vec2::new(cel_size.0 as f32, cel_size.1 as f32),
-		grid_size.0,
-		grid_size.1,
-		None,
-		None,
-	))
+) -> SpriteSheet {
+	SpriteSheet {
+		image: asset_server.load(path),
+		layout: atlases.add(TextureAtlasLayout::from_grid(
+			Vec2::new(cel_size.0 as f32, cel_size.1 as f32),
+			grid_size.0,
+			grid_size.1,
+			None,
+			None,
+		)),
+	}
 }
 
 fn from_cels(
 	asset_server: &AssetServer,
-	texture_atlases: &mut Assets<TextureAtlas>,
+	atlases: &mut Assets<TextureAtlasLayout>,
 	path: &'static str,
 	texture_size: (usize, usize),
 	cels: &[Rect],
-) -> Handle<TextureAtlas> {
-	let mut texture_atlas = TextureAtlas::new_empty(
-		asset_server.load(path),
-		Vec2::new(texture_size.0 as f32, texture_size.1 as f32),
-	);
+) -> SpriteSheet {
+	let mut atlas = TextureAtlasLayout::new_empty(Vec2::new(
+		texture_size.0 as f32,
+		texture_size.1 as f32,
+	));
 	for cel in cels {
-		texture_atlas.add_texture(*cel);
+		atlas.add_texture(*cel);
 	}
-	texture_atlases.add(texture_atlas)
+	SpriteSheet {
+		image: asset_server.load(path),
+		layout: atlases.add(atlas),
+	}
 }

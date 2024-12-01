@@ -7,7 +7,7 @@ use bevy::prelude::*;
 
 /// Updates simple animations.
 pub fn animate_simple(
-	mut query: Query<(&mut SimpleAnimation, &mut TextureAtlasSprite)>,
+	mut query: Query<(&mut SimpleAnimation, &mut TextureAtlas)>,
 ) {
 	for (mut animation, mut sprite) in query.iter_mut() {
 		// Update animation.
@@ -19,11 +19,7 @@ pub fn animate_simple(
 
 /// Updates directed animations.
 pub fn animate_directed(
-	mut query: Query<(
-		&mut DirectedAnimation,
-		&mut TextureAtlasSprite,
-		&Direction,
-	)>,
+	mut query: Query<(&mut DirectedAnimation, &mut TextureAtlas, &Direction)>,
 ) {
 	// Update directional animations.
 	for (mut animation, mut sprite, direction) in query.iter_mut() {

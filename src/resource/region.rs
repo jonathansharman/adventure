@@ -81,11 +81,11 @@ impl Region {
 						row as f32 * -TILE_SIZE,
 					)),
 					SpriteSheetBundle {
-						sprite: TextureAtlasSprite {
+						texture: sprite_sheets.terrain.image.clone(),
+						atlas: TextureAtlas {
+							layout: sprite_sheets.terrain.layout.clone(),
 							index: *terrain as usize,
-							..Default::default()
 						},
-						texture_atlas: sprite_sheets.terrain.clone(),
 						transform: Transform::from_translation(
 							Z_BACK * Vec3::Z,
 						),
@@ -95,7 +95,7 @@ impl Region {
 				.id();
 			if terrain.blocks_movement() {
 				commands.entity(tile).insert((
-					Collider::cuboid(TILE_SIZE, TILE_SIZE),
+					Collider::rectangle(TILE_SIZE, TILE_SIZE),
 					Friction::ZERO,
 				));
 			}
@@ -108,7 +108,7 @@ impl Region {
 				Heart,
 				RigidBody::Dynamic,
 				Position(heart_location.into()),
-				Collider::cuboid(HEART_WIDTH, HEART_HEIGHT),
+				Collider::rectangle(HEART_WIDTH, HEART_HEIGHT),
 				Sensor,
 				Direction::Down,
 				SimpleAnimation::new(vec![SimpleFrame {
@@ -116,7 +116,11 @@ impl Region {
 					duration: None,
 				}]),
 				SpriteSheetBundle {
-					texture_atlas: sprite_sheets.hearts.clone(),
+					texture: sprite_sheets.hearts.image.clone(),
+					atlas: TextureAtlas {
+						layout: sprite_sheets.hearts.layout.clone(),
+						index: 0,
+					},
 					transform: Transform::from_translation(Z_MID * Vec3::Z),
 					..Default::default()
 				},

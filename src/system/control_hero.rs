@@ -15,8 +15,8 @@ use bevy_xpbd_2d::prelude::*;
 pub fn control_hero(
 	mut commands: Commands,
 	asset_server: Res<AssetServer>,
-	mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-	input: Res<Input<KeyCode>>,
+	mut atlases: ResMut<Assets<TextureAtlasLayout>>,
+	input: Res<ButtonInput<KeyCode>>,
 	mut query: Query<
 		(Entity, &mut LinearVelocity, &mut Direction),
 		(
@@ -32,16 +32,16 @@ pub fn control_hero(
 		// Movement
 		let mut vx: i16 = 0;
 		let mut vy: i16 = 0;
-		if input.pressed(KeyCode::Up) {
+		if input.pressed(KeyCode::ArrowUp) {
 			vy += 1;
 		}
-		if input.pressed(KeyCode::Down) {
+		if input.pressed(KeyCode::ArrowDown) {
 			vy -= 1;
 		}
-		if input.pressed(KeyCode::Left) {
+		if input.pressed(KeyCode::ArrowLeft) {
 			vx -= 1;
 		}
-		if input.pressed(KeyCode::Right) {
+		if input.pressed(KeyCode::ArrowRight) {
 			vx += 1;
 		}
 		// Update direction if needed. There are eight directions of
@@ -75,17 +75,15 @@ pub fn control_hero(
 			velocity.y = vy as f32 * DIAGONAL_SPEED;
 		}
 		// Check for sword attack.
-		if input.just_pressed(KeyCode::R) {
+		if input.just_pressed(KeyCode::KeyR) {
 			let advancing = match *direction {
 				Direction::Up => vy == 1,
 				Direction::Down => vy == -1,
 				Direction::Left => vx == -1,
 				Direction::Right => vx == 1,
 			};
-			let sprite_sheets = SpriteSheets::new(
-				asset_server.as_ref(),
-				texture_atlases.as_mut(),
-			);
+			let sprite_sheets =
+				SpriteSheets::new(asset_server.as_ref(), atlases.as_mut());
 			if advancing {
 				// Hero is advancing -> thrust attack.
 				let sword_id = commands
@@ -103,7 +101,14 @@ pub fn control_hero(
 							}],
 						),
 						SpriteSheetBundle {
-							texture_atlas: sprite_sheets.thrust_attack.clone(),
+							texture: sprite_sheets.thrust_attack.image.clone(),
+							atlas: TextureAtlas {
+								layout: sprite_sheets
+									.thrust_attack
+									.layout
+									.clone(),
+								index: 0,
+							},
 							..Default::default()
 						},
 					))
@@ -129,7 +134,14 @@ pub fn control_hero(
 							}],
 						),
 						SpriteSheetBundle {
-							texture_atlas: sprite_sheets.thrust_attack.clone(),
+							texture: sprite_sheets.thrust_attack.image.clone(),
+							atlas: TextureAtlas {
+								layout: sprite_sheets
+									.thrust_attack
+									.layout
+									.clone(),
+								index: 0,
+							},
 							..Default::default()
 						},
 					))
