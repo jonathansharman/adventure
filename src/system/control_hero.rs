@@ -8,8 +8,8 @@ use crate::{
 	resource::SpriteSheets,
 };
 
+use avian2d::prelude::*;
 use bevy::prelude::*;
-use bevy_xpbd_2d::prelude::*;
 
 /// Controls the hero character based on player input.
 pub fn control_hero(
@@ -100,16 +100,13 @@ pub fn control_hero(
 								duration: None,
 							}],
 						),
-						SpriteSheetBundle {
+						SpriteBundle {
 							texture: sprite_sheets.thrust_attack.image.clone(),
-							atlas: TextureAtlas {
-								layout: sprite_sheets
-									.thrust_attack
-									.layout
-									.clone(),
-								index: 0,
-							},
 							..Default::default()
+						},
+						TextureAtlas {
+							layout: sprite_sheets.thrust_attack.layout.clone(),
+							index: 0,
 						},
 					))
 					.id();
@@ -133,16 +130,13 @@ pub fn control_hero(
 								duration: None,
 							}],
 						),
-						SpriteSheetBundle {
+						SpriteBundle {
 							texture: sprite_sheets.thrust_attack.image.clone(),
-							atlas: TextureAtlas {
-								layout: sprite_sheets
-									.thrust_attack
-									.layout
-									.clone(),
-								index: 0,
-							},
 							..Default::default()
+						},
+						TextureAtlas {
+							layout: sprite_sheets.thrust_attack.layout.clone(),
+							index: 0,
 						},
 					))
 					.id();

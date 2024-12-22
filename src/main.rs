@@ -1,6 +1,3 @@
-// Complex types are extremely common in Bevy queries.
-#![allow(clippy::type_complexity)]
-
 mod component;
 mod constants;
 mod resource;
@@ -12,9 +9,8 @@ use crate::{
 	system::*,
 };
 
-use bevy::prelude::*;
-use bevy_pixel_camera::PixelCameraPlugin;
-use bevy_xpbd_2d::{math::Vector, prelude::*};
+use avian2d::{math::Vector, prelude::*};
+use bevy::{prelude::*, window::WindowResolution};
 
 fn main() {
 	App::new()
@@ -38,14 +34,14 @@ fn main() {
 				.set(WindowPlugin {
 					primary_window: Some(Window {
 						title: "Adventure".to_string(),
-						resolution: (800.0, 600.0).into(),
+						resolution: WindowResolution::new(800.0, 600.0)
+							.with_scale_factor_override(2.0),
 						..default()
 					}),
 					..default()
 				})
 				// Use nearest sampling rather than linear interpolation.
 				.set(ImagePlugin::default_nearest()),
-			PixelCameraPlugin,
 			PhysicsPlugins::new(PreUpdate),
 		))
 		.run();

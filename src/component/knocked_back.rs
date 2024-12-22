@@ -1,7 +1,7 @@
 use crate::constants::*;
 
+use avian2d::{math::Vector, prelude::*};
 use bevy::prelude::*;
-use bevy_xpbd_2d::{math::Vector, prelude::*};
 
 /// Makes a character be knocked back with some velocity for a short duration.
 #[derive(Component)]

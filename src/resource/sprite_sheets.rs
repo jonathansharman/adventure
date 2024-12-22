@@ -1,13 +1,12 @@
 use bevy::prelude::*;
 
-#[derive(Debug)]
 pub struct SpriteSheet {
 	pub image: Handle<Image>,
 	pub layout: Handle<TextureAtlasLayout>,
 }
 
 /// Container for all the game's sprite sheets.
-#[derive(Resource, Debug)]
+#[derive(Resource)]
 pub struct SpriteSheets {
 	pub character: SpriteSheet,
 	pub slash_attack: SpriteSheet,
@@ -28,30 +27,30 @@ impl SpriteSheets {
 				asset_server,
 				atlases,
 				"sprites/character.png",
-				(20, 20),
-				(4, 1),
+				UVec2::new(20, 20),
+				UVec2::new(4, 1),
 			),
 			slash_attack: from_cels(
 				asset_server,
 				atlases,
 				"sprites/slash_attack.png",
-				(80, 40),
+				UVec2::new(80, 40),
 				&[
-					Rect {
-						min: Vec2::new(0.0, 0.0),
-						max: Vec2::new(40.0, 20.0),
+					URect {
+						min: UVec2::new(0, 0),
+						max: UVec2::new(40, 20),
 					},
-					Rect {
-						min: Vec2::new(0.0, 20.0),
-						max: Vec2::new(40.0, 40.0),
+					URect {
+						min: UVec2::new(0, 20),
+						max: UVec2::new(40, 40),
 					},
-					Rect {
-						min: Vec2::new(40.0, 0.0),
-						max: Vec2::new(60.0, 40.0),
+					URect {
+						min: UVec2::new(40, 0),
+						max: UVec2::new(60, 40),
 					},
-					Rect {
-						min: Vec2::new(60.0, 0.0),
-						max: Vec2::new(80.0, 40.0),
+					URect {
+						min: UVec2::new(60, 0),
+						max: UVec2::new(80, 40),
 					},
 				],
 			),
@@ -59,51 +58,51 @@ impl SpriteSheets {
 				asset_server,
 				atlases,
 				"sprites/thrust_attack.png",
-				(20, 20),
-				(4, 1),
+				UVec2::new(20, 20),
+				UVec2::new(4, 1),
 			),
 			terrain: from_grid(
 				asset_server,
 				atlases,
 				"sprites/terrain.png",
-				(20, 20),
-				(4, 3),
+				UVec2::new(20, 20),
+				UVec2::new(4, 3),
 			),
 			hearts: from_grid(
 				asset_server,
 				atlases,
 				"sprites/hearts.png",
-				(13, 12),
-				(3, 1),
+				UVec2::new(13, 12),
+				UVec2::new(3, 1),
 			),
 			arrow_attack: from_grid(
 				asset_server,
 				atlases,
 				"sprites/arrow_attack.png",
-				(20, 20),
-				(4, 1),
+				UVec2::new(20, 20),
+				UVec2::new(4, 1),
 			),
 			shield: from_cels(
 				asset_server,
 				atlases,
 				"sprites/shield.png",
-				(32, 20),
+				UVec2::new(32, 20),
 				&[
-					Rect {
-						min: Vec2::new(0.0, 0.0),
-						max: Vec2::new(20.0, 6.0),
+					URect {
+						min: UVec2::new(0, 0),
+						max: UVec2::new(20, 6),
 					},
-					Rect {
-						min: Vec2::new(0.0, 6.0),
-						max: Vec2::new(20.0, 12.0),
+					URect {
+						min: UVec2::new(0, 6),
+						max: UVec2::new(20, 12),
 					},
-					Rect {
-						min: Vec2::new(20.0, 0.0),
-						max: Vec2::new(26.0, 20.0),
+					URect {
+						min: UVec2::new(20, 0),
+						max: UVec2::new(26, 20),
 					},
-					Rect {
-						min: Vec2::new(26.0, 0.0),
-						max: Vec2::new(32.0, 20.0),
+					URect {
+						min: UVec2::new(26, 0),
+						max: UVec2::new(32, 20),
 					},
 				],
 			),
@@ -115,15 +114,15 @@ fn from_grid(
 	asset_server: &AssetServer,
 	atlases: &mut Assets<TextureAtlasLayout>,
 	path: &'static str,
-	cel_size: (usize, usize),
-	grid_size: (usize, usize),
+	cel_size: UVec2,
+	grid_size: UVec2,
 ) -> SpriteSheet {
 	SpriteSheet {
 		image: asset_server.load(path),
 		layout: atlases.add(TextureAtlasLayout::from_grid(
-			Vec2::new(cel_size.0 as f32, cel_size.1 as f32),
-			grid_size.0,
-			grid_size.1,
+			cel_size,
+			grid_size.x,
+			grid_size.y,
 			None,
 			None,
 		)),
@@ -134,13 +133,10 @@ fn from_cels(
 	asset_server: &AssetServer,
 	atlases: &mut Assets<TextureAtlasLayout>,
 	path: &'static str,
-	texture_size: (usize, usize),
-	cels: &[Rect],
+	texture_size: UVec2,
+	cels: &[URect],
 ) -> SpriteSheet {
-	let mut atlas = TextureAtlasLayout::new_empty(Vec2::new(
-		texture_size.0 as f32,
-		texture_size.1 as f32,
-	));
+	let mut atlas = TextureAtlasLayout::new_empty(texture_size);
 	for cel in cels {
 		atlas.add_texture(*cel);
 	}

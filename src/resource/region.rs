@@ -7,8 +7,8 @@ use crate::{
 	resource::SpriteSheets,
 };
 
+use avian2d::{math::Vector, prelude::*};
 use bevy::prelude::*;
-use bevy_xpbd_2d::{math::Vector, prelude::*};
 use ron::de::from_reader;
 use serde::Deserialize;
 
@@ -80,16 +80,16 @@ impl Region {
 						col as f32 * TILE_SIZE,
 						row as f32 * -TILE_SIZE,
 					)),
-					SpriteSheetBundle {
+					SpriteBundle {
 						texture: sprite_sheets.terrain.image.clone(),
-						atlas: TextureAtlas {
-							layout: sprite_sheets.terrain.layout.clone(),
-							index: *terrain as usize,
-						},
 						transform: Transform::from_translation(
 							Z_BACK * Vec3::Z,
 						),
 						..Default::default()
+					},
+					TextureAtlas {
+						layout: sprite_sheets.terrain.layout.clone(),
+						index: *terrain as usize,
 					},
 				))
 				.id();
@@ -115,14 +115,14 @@ impl Region {
 					sprite_index: 1,
 					duration: None,
 				}]),
-				SpriteSheetBundle {
+				SpriteBundle {
 					texture: sprite_sheets.hearts.image.clone(),
-					atlas: TextureAtlas {
-						layout: sprite_sheets.hearts.layout.clone(),
-						index: 0,
-					},
 					transform: Transform::from_translation(Z_MID * Vec3::Z),
 					..Default::default()
+				},
+				TextureAtlas {
+					layout: sprite_sheets.hearts.layout.clone(),
+					index: 0,
 				},
 			));
 		}

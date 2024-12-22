@@ -7,9 +7,8 @@ use crate::{
 	resource::{Region, SpriteSheets},
 };
 
+use avian2d::{math::Vector, prelude::*};
 use bevy::prelude::*;
-use bevy_pixel_camera::PixelZoom;
-use bevy_xpbd_2d::{math::Vector, prelude::*};
 
 pub fn setup(
 	mut commands: Commands,
@@ -19,7 +18,7 @@ pub fn setup(
 	let sprite_sheets =
 		SpriteSheets::new(asset_server.as_ref(), atlases.as_mut());
 
-	commands.spawn((Camera2dBundle::default(), PixelZoom::Fixed(2)));
+	commands.spawn(Camera2dBundle::default());
 
 	commands.spawn((
 		Hero,
@@ -40,14 +39,14 @@ pub fn setup(
 				duration: None,
 			}],
 		),
-		SpriteSheetBundle {
+		SpriteBundle {
 			texture: sprite_sheets.character.image.clone(),
-			atlas: TextureAtlas {
-				layout: sprite_sheets.character.layout.clone(),
-				index: 0,
-			},
 			transform: Transform::from_translation(Z_FRONT * Vec3::Z),
 			..Default::default()
+		},
+		TextureAtlas {
+			layout: sprite_sheets.character.layout.clone(),
+			index: 0,
 		},
 	));
 
