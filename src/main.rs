@@ -26,8 +26,6 @@ fn main() {
 				.chain(),
 		)
 		.insert_resource(ClearColor(Color::BLACK))
-		// Disable anti-aliasing.
-		.insert_resource(Msaa::Off)
 		.insert_resource(Gravity(Vector::ZERO))
 		.add_plugins((
 			DefaultPlugins

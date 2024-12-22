@@ -100,13 +100,16 @@ pub fn control_hero(
 								duration: None,
 							}],
 						),
-						SpriteBundle {
-							texture: sprite_sheets.thrust_attack.image.clone(),
+						Sprite {
+							image: sprite_sheets.thrust_attack.image.clone(),
+							texture_atlas: Some(TextureAtlas {
+								layout: sprite_sheets
+									.thrust_attack
+									.layout
+									.clone(),
+								index: 0,
+							}),
 							..Default::default()
-						},
-						TextureAtlas {
-							layout: sprite_sheets.thrust_attack.layout.clone(),
-							index: 0,
 						},
 					))
 					.id();
@@ -130,13 +133,16 @@ pub fn control_hero(
 								duration: None,
 							}],
 						),
-						SpriteBundle {
-							texture: sprite_sheets.thrust_attack.image.clone(),
+						Sprite {
+							image: sprite_sheets.thrust_attack.image.clone(),
+							texture_atlas: Some(TextureAtlas {
+								layout: sprite_sheets
+									.thrust_attack
+									.layout
+									.clone(),
+								index: 0,
+							}),
 							..Default::default()
-						},
-						TextureAtlas {
-							layout: sprite_sheets.thrust_attack.layout.clone(),
-							index: 0,
 						},
 					))
 					.id();

@@ -18,7 +18,7 @@ pub fn setup(
 	let sprite_sheets =
 		SpriteSheets::new(asset_server.as_ref(), atlases.as_mut());
 
-	commands.spawn(Camera2dBundle::default());
+	commands.spawn((Camera2d, Msaa::Off));
 
 	commands.spawn((
 		Hero,
@@ -39,14 +39,14 @@ pub fn setup(
 				duration: None,
 			}],
 		),
-		SpriteBundle {
-			texture: sprite_sheets.character.image.clone(),
-			transform: Transform::from_translation(Z_FRONT * Vec3::Z),
+		Transform::from_translation(Z_FRONT * Vec3::Z),
+		Sprite {
+			image: sprite_sheets.character.image.clone(),
+			texture_atlas: Some(TextureAtlas {
+				layout: sprite_sheets.character.layout.clone(),
+				index: 0,
+			}),
 			..Default::default()
-		},
-		TextureAtlas {
-			layout: sprite_sheets.character.layout.clone(),
-			index: 0,
 		},
 	));
 

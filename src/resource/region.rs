@@ -80,16 +80,14 @@ impl Region {
 						col as f32 * TILE_SIZE,
 						row as f32 * -TILE_SIZE,
 					)),
-					SpriteBundle {
-						texture: sprite_sheets.terrain.image.clone(),
-						transform: Transform::from_translation(
-							Z_BACK * Vec3::Z,
-						),
+					Transform::from_translation(Z_BACK * Vec3::Z),
+					Sprite {
+						image: sprite_sheets.terrain.image.clone(),
+						texture_atlas: Some(TextureAtlas {
+							layout: sprite_sheets.terrain.layout.clone(),
+							index: *terrain as usize,
+						}),
 						..Default::default()
-					},
-					TextureAtlas {
-						layout: sprite_sheets.terrain.layout.clone(),
-						index: *terrain as usize,
 					},
 				))
 				.id();
@@ -115,14 +113,14 @@ impl Region {
 					sprite_index: 1,
 					duration: None,
 				}]),
-				SpriteBundle {
-					texture: sprite_sheets.hearts.image.clone(),
-					transform: Transform::from_translation(Z_MID * Vec3::Z),
+				Transform::from_translation(Z_MID * Vec3::Z),
+				Sprite {
+					image: sprite_sheets.hearts.image.clone(),
+					texture_atlas: Some(TextureAtlas {
+						layout: sprite_sheets.hearts.layout.clone(),
+						index: 0,
+					}),
 					..Default::default()
-				},
-				TextureAtlas {
-					layout: sprite_sheets.hearts.layout.clone(),
-					index: 0,
 				},
 			));
 		}
